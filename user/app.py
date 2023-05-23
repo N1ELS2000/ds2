@@ -4,6 +4,7 @@ from flask_restful import Resource, Api, reqparse
 import psycopg2
 
 parser = reqparse.RequestParser()
+parser.add_argument('user_id')
 parser.add_argument('username')
 parser.add_argument('password')
 
@@ -51,6 +52,23 @@ def check_user(username, password):
     return True
 
 
+def get_id_user(username):
+    cur = conn.cursor()
+    cur.execute("SELECT id from users WHERE username = \'{}\';".format(username))
+    t = cur.fetchone()
+    if t is None:
+        return -1
+    return t[0]
+
+
+def get_name_of(id1):
+    cur = conn.cursor()
+    cur.execute("SELECT username FROM users WHERE id = {};".format(id1))
+    t = cur.fetchone()
+    print("Inside get_name_of the name of user_id: ", id1, " is ", str(t), flush=True)
+    return t[0]
+
+
 class AddUser(Resource):
     def put(self):
         args = flask_request.args
@@ -63,5 +81,19 @@ class CheckUser(Resource):
         return check_user(args['username'], args['password'])
 
 
+class IdUser(Resource):
+    def get(self):
+        args = flask_request.args
+        return get_id_user(args['username'])
+
+
+class NameUser(Resource):
+    def get(self):
+        args = flask_request.args
+        return get_name_of(args['user_id'])
+
+
 api.add_resource(AddUser, '/user/add/')
 api.add_resource(CheckUser, '/user/login/')
+api.add_resource(IdUser, '/user/id/')
+api.add_resource(NameUser, '/user/id_of/')

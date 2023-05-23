@@ -90,8 +90,8 @@ def actual_register():
     # ================================
     # FEATURE 1 (register)
     #
-    # send the username and password to the microservice
-    # microservice returns True if registration is succesful, False if otherwise.
+    # send the username and password to the microservice.
+    # microservice returns True if registration is successful, False if otherwise.
     #
     # Registration is successful if a user with the same username doesn't exist yet.
     # ================================
@@ -124,7 +124,15 @@ def friends():
     # ================================
 
     if username is not None:
+        # first get the id of the currently logged-in user
+        id_one = requests.get("http://users:5000/user/id/", params={'username': username}).json()
+        # then get all the friends of this user
+        all_friends = requests.get("http://friends:5000/friend/friends_of/", params={'id_one': id_one}).json()
         friend_list = []
+        # now convert the list of ids all_friends to a list of usernames friend_list
+        for a_id in all_friends:
+            name = requests.get("http://users:5000/user/id_of/", params={'user_id': a_id}).json()
+            friend_list.append(name)
     else:
         friend_list = []  # TODO: call
 
@@ -145,7 +153,19 @@ def add_friend():
     global username
     req_username = request.form['username']
 
-    success = None  # TODO: call
+    # first get the id's of the given users
+    id_one = requests.get("http://users:5000/user/id/", params={'username': username}).json()
+    print("Inside add_friend in GUI, id_one = ", id_one, flush=True)
+    id_two = requests.get("http://users:5000/user/id/", params={'username': req_username}).json()
+    print("And id_two = ", id_two, flush=True)
+
+    # if id_two == -1 then the user does not exist, success is False
+    if id_two == -1:
+        success = False
+    # else, we feed those id's to the friends microservice
+    else:
+        success = requests.put("http://friends:5000/friend/add/", params={'id_one': id_one, 'id_two': id_two})
+
     save_to_session('success', success)
 
     return redirect('/friends')
