@@ -1,3 +1,5 @@
+import sys
+
 from flask import Flask, render_template, redirect, request, url_for
 import requests
 
@@ -26,7 +28,6 @@ def feed():
     #
     # Get the feed of the last N activities of your friends.
     # ================================
-
     global username
 
     N = 10
@@ -94,10 +95,10 @@ def actual_register():
     #
     # Registration is successful if a user with the same username doesn't exist yet.
     # ================================
-
-    # TODO: REGISTER CALL
+    # make the call
     test = requests.put("http://users:5000/user/add", params={'username': req_username, 'password': req_password})
-    success = True
+    # add the boolean to the success variable
+    success = test
 
     save_to_session('success', success)
 

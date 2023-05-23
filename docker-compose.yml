@@ -24,9 +24,10 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       # Map the user_persistence folder to the docker-entrypoint-initdb.d folder in the container.
-      - ./user_persistence/:/docker-entrypoint-initdb.d
+      - ./user_persistence/init.sh:/docker-entrypoint-initdb.d/docker_postgres_init.sh
       # Map the psql data from the container to a virtual volume, thus preserving the data after the container is stopped.
       - user_data:/var/lib/postgresql/data
+
 
   users:
     build: ./user

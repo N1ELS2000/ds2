@@ -6,10 +6,9 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 EOSQL
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "users" <<-EOSQL
-    CREATE TABLE user(
-        id INTEGER NOT NULL,
-        email TEXT NOT NULL,
-        password TEXT NOT NULL,
-        PRIMARY KEY (id)
+    CREATE TABLE users(
+        id SERIAL PRIMARY KEY,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL
     );
 EOSQL
