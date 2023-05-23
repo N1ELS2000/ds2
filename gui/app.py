@@ -185,7 +185,8 @@ def playlists():
         # Get all playlists you created and all playlist that are shared with you. (list of id, title pairs)
         # ================================
 
-        my_playlists = []  # TODO: call
+        my_playlists = requests.get("http://playlists:5000/playlists/own/", params={'username': username}).json()
+        print(my_playlists, flush=True)
         shared_with_me = []  # TODO: call
 
     return render_template('playlists.html', username=username, password=password, my_playlists=my_playlists, shared_with_me=shared_with_me)

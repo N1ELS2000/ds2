@@ -25,10 +25,11 @@ while conn is None:
 
 
 def add_playlist(user, title):
-    if not check_playlist(user, title):
+    if check_playlist(user, title):
         cur = conn.cursor()
         cur.execute("INSERT INTO playlists (title, owner) VALUES (\'{}\', \'{}\');".format(title, user))
-        conn.commit()
+        r = conn.commit()
+        print("Inside add_playlist ", str(r), flush=True)
         return True
     return False
 
@@ -37,9 +38,18 @@ def check_playlist(user, title):
     cur = conn.cursor()
     cur.execute("SELECT * FROM playlists WHERE title = \'{}\' AND owner = \'{}\';".format(title, user))
     t = cur.fetchone()
+    print("inside check_playlist: ", str(t), flush=True)
     if t is not None:
         return False
     return True
+
+
+def get_own_playlists(owner):
+    cur = conn.cursor()
+    cur.execute("SELECT id, title FROM playlists WHERE owner = \'{}\';".format(owner))
+    t = cur.fetchall()
+    print("Inside get_own_playlists, the answer for owner: ", owner, " is: ", str(t), flush=True)
+    return t
 
 
 class AddPlaylist(Resource):
@@ -48,4 +58,11 @@ class AddPlaylist(Resource):
         return add_playlist(args['username'], args['title'])
 
 
+class GetOwnPlaylists(Resource):
+    def get(self):
+        args = flask_request.args
+        return get_own_playlists(args['username'])
+
+
 api.add_resource(AddPlaylist, '/playlists/add/')
+api.add_resource(GetOwnPlaylists, '/playlists/own/')
