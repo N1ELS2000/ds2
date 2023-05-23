@@ -3,6 +3,7 @@ volumes:
   songs_data:  # Create a volume core_data that will contain the data for 'songs_persistence', such that when the container is stopped / crashes, the data remains.
   user_data:
   friends_data:
+  playlists_data:
 services:
   songs_persistence:
     image: docker.io/postgres
@@ -39,6 +40,23 @@ services:
     volumes:
       - ./friends_persistence/init.sh:/docker-entrypoint-initdb.d/docker_postgres_init.sh
       - friends_data:/var/lib/postgresql/data
+
+  playlists_persistence:
+    image: docker.io/postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./playlists_persistence/init.sh:/docker-entrypoint-initdb.d/docker_postgres_init.sh
+      - playlists_data:/var/lib/postgresql/data
+
+  playlists:
+    build: ./playlists
+    ports:
+      - 5004:5000
+    depends_on:
+      - playlists_persistence
 
   friends:
     build: ./friends

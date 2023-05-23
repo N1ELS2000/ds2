@@ -134,7 +134,7 @@ def friends():
             name = requests.get("http://users:5000/user/id_of/", params={'user_id': a_id}).json()
             friend_list.append(name)
     else:
-        friend_list = []  # TODO: call
+        friend_list = []
 
     return render_template('friends.html', username=username, password=password, success=success, friend_list=friend_list)
 
@@ -201,7 +201,7 @@ def create_playlist():
     global username
     title = request.form['title']
 
-    # TODO: call
+    success = requests.put("http://playlists:5000/playlists/add/", params={'username': username, 'title': title})
 
     return redirect('/playlists')
 
