@@ -43,6 +43,14 @@ def user_exists(username):
     return True
 
 
+def check_user(username, password):
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE username = \'{}\' AND password = \'{}\';".format(username, password))
+    if cur.fetchone() is None:
+        return False
+    return True
+
+
 class AddUser(Resource):
     def put(self):
         args = flask_request.args
@@ -52,7 +60,8 @@ class AddUser(Resource):
 class CheckUser(Resource):
     def get(self):
         args = flask_request.args
-        return True
+        return check_user(args['username'], args['password'])
 
 
 api.add_resource(AddUser, '/user/add/')
+api.add_resource(CheckUser, '/user/login/')

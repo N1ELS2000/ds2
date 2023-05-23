@@ -65,7 +65,7 @@ def actual_login():
     # microservice returns True if correct combination, False if otherwise.
     # Also pay attention to the status code returned by the microservice.
     # ================================
-    success = None  # TODO: call
+    success = requests.get("http://users:5000/user/login/", params={'username': req_username, 'password': req_password})
 
     save_to_session('success', success)
     if success:
@@ -137,8 +137,9 @@ def add_friend():
     # ==============================
     # FEATURE 3
     #
-    # send the username of the current user and the username of the added friend to the microservice
-    # microservice returns True if the friend request is successful (the friend exists & is not already friends), False if otherwise
+    # send the username of the current user and the username of the added friend to the microservice.
+    # microservice returns True if the friend request is successful (the friend exists & is not already friends),
+    # False if otherwise
     # ==============================
 
     global username
